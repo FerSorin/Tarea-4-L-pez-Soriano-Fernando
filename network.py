@@ -7,6 +7,13 @@ algorithm for a feedforward neural network.  Gradients are calculated
 using backpropagation.  Note that I have focused on making the code
 simple, easily readable, and easily modifiable.  It is not optimized,
 and omits many desirable features.
+
+Un módulo para implementar el algoritmo de aprendizaje de descenso de
+gradiente estocástico para una red neuronal feedforward. Los gradientes 
+se calculan mediante retropropagación. Tenga en cuenta que me he centrado 
+en hacer que el código sea simple, fácilmente legible y fácilmente modificable. 
+No está optimizado y omite muchas características deseables.
+
 """
 
 #### Libraries
@@ -28,7 +35,18 @@ class Network(object):
         distribution with mean 0, and variance 1.  Note that the first
         layer is assumed to be an input layer, and by convention we
         won't set any biases for those neurons, since biases are only
-        ever used in computing the outputs from later layers."""
+        ever used in computing the outputs from later layers.
+        
+        La lista ``sizes`` contiene el número de neuronas en las
+        respectivas capas de la red. Por ejemplo, si la lista fuera [2, 3, 1], 
+        entonces sería una red de tres capas, donde la primera capa contendría 
+        2 neuronas, la segunda capa 3 neuronas y la tercera capa 1 neurona. 
+        Los sesgos y pesos de la red se inicializan aleatoriamente, utilizando 
+        una distribución gaussiana con media 0 y varianza 1. Tenga en cuenta que 
+        se supone que la primera capa es una capa de entrada y, por convención, 
+        no estableceremos ningún sesgo para esas neuronas. ya que los sesgos solo 
+        se utilizan para calcular los resultados de capas posteriores.
+        """
         self.num_layers = len(sizes)
         self.sizes = sizes
         self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
@@ -50,7 +68,17 @@ class Network(object):
         self-explanatory.  If ``test_data`` is provided then the
         network will be evaluated against the test data after each
         epoch, and partial progress printed out.  This is useful for
-        tracking progress, but slows things down substantially."""
+        tracking progress, but slows things down substantially.
+
+        
+        Entrene la red neuronal mediante el descenso de gradiente 
+        estocástico de mini lotes. ``training_data`` es una lista de tuplas 
+        ``(x, y)`` que representan las entradas de entrenamiento y las salidas 
+        deseadas. Los demás parámetros no opcionales se explican por sí solos. 
+        Si se proporciona ``test_data``, la red se evaluará con los datos de 
+        prueba después de cada época y se imprimirá el progreso parcial. 
+        Esto es útil para seguir el progreso, pero ralentiza considerablemente el proceso.
+        """
         if test_data:
             test_data = list(test_data)
             n_test = len(test_data)
@@ -74,7 +102,14 @@ class Network(object):
         """Update the network's weights and biases by applying
         gradient descent using backpropagation to a single mini batch.
         The ``mini_batch`` is a list of tuples ``(x, y)``, and ``eta``
-        is the learning rate."""
+        is the learning rate.
+        
+        Actualice los pesos y sesgos de la red aplicando un descenso de 
+        gradiente mediante retropropagación a un único mini lote.
+        El ``mini_batch`` es una lista de tuplas ``(x, y)`` y ``eta`` 
+        es la tasa de aprendizaje."""
+
+        
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
         for x, y in mini_batch:
@@ -113,6 +148,13 @@ class Network(object):
         # second-last layer, and so on.  It's a renumbering of the
         # scheme in the book, used here to take advantage of the fact
         # that Python can use negative indices in lists.
+       """Tenga en cuenta que la variable l en el bucle siguiente se usa 
+        de manera un poco diferente a la notación del Capítulo 2 del libro. 
+        Aquí, l = 1 significa la última capa de neuronas, l = 2 es la penúltima 
+        capa, y así sucesivamente. Es una renumeración del esquema del libro, 
+        que se usa aquí para aprovechar el hecho de que Python puede usar índices 
+        negativos en las listas. """
+        
         for l in range(2, self.num_layers):
             z = zs[-l]
             sp = sigmoid_prime(z)
@@ -125,7 +167,13 @@ class Network(object):
         """Return the number of test inputs for which the neural
         network outputs the correct result. Note that the neural
         network's output is assumed to be the index of whichever
-        neuron in the final layer has the highest activation."""
+        neuron in the final layer has the highest activation.
+        
+        Devuelve el número de entradas de prueba para las cuales 
+        la red neuronal genera el resultado correcto. Tenga en 
+        cuenta que se supone que la salida de la red neuronal 
+        es el índice de la neurona de la capa final que tenga la mayor activación.
+        """
         test_results = [(np.argmax(self.feedforward(x)), y)
                         for (x, y) in test_data]
         return sum(int(x == y) for (x, y) in test_results)
